@@ -6,6 +6,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'antlr'
+    id "org.xbib.gradle.plugin.jflex" version "3.0.2"
 }
 
 repositories {
@@ -27,9 +28,9 @@ dependencies {
     api 'org.antlr:antlr4:4.13.2'
     api 'io.github.jmltoolkit:jmlparser-symbol-solver-core:3.25.10-b5-SNAPSHOT'
     api 'org.antlr:ST4:4.3.4'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 
-    api 'de.jflex:jflex-maven-plugin:1.9.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     antlr4 'org.antlr:antlr4:4.13.2'
 }
@@ -38,6 +39,10 @@ group = 'org.contractlib'
 version = '0.1-SNAPSHOT'
 description = 'Contract-LIB'
 java.sourceCompatibility = JavaVersion.VERSION_21
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
 
 publishing {
     publications {
@@ -62,10 +67,6 @@ tasks.register('runAntlr4', JavaExec) {
         file(antlr4Output).mkdirs()
         println("create $antlr4Output")
     }
-}
-
-generate {
-
 }
 
 tasks.withType(JavaCompile).configureEach {
