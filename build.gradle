@@ -4,35 +4,32 @@
 
 plugins {
     id 'java-library'
-    id 'maven-publish'
     id 'antlr'
-    id "org.xbib.gradle.plugin.jflex" version "3.0.2"
+    id 'maven-publish'
+    id 'org.xbib.gradle.plugin.jflex' version '3.0.2'
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        url = uri('https://s01.oss.sonatype.org/content/repositories/snapshots')
-    }
-
-    maven {
-        url = uri('https://repo.maven.apache.org/maven2/')
-    }
+    mavenCentral()
 }
 
 configurations { antlr4 }
 
-sourceSets.main.java.srcDirs("$projectDir/build/generated-src/antlr4/main/")
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated-src/antlr4/main/"
+            srcDir "$buildDir/generated-src/jflex/main/"
+        }
+    }
+}
 
 dependencies {
     api 'org.antlr:antlr4:4.13.2'
-    api 'io.github.jmltoolkit:jmlparser-symbol-solver-core:3.25.10-b5-SNAPSHOT'
-    api 'org.antlr:ST4:4.3.4'
+    antlr4 'org.antlr:antlr4:4.13.2'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    antlr4 'org.antlr:antlr4:4.13.2'
 }
 
 group = 'org.contractlib'
@@ -44,6 +41,11 @@ tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
@@ -52,7 +54,7 @@ publishing {
     }
 }
 
-def antlr4Output = "$projectDir/build/generated-src/antlr4/main/org/contractlib/antlr4parser"
+def antlr4Output = "$buildDir/generated-src/antlr4/main/org/contractlib/antlr4parser"
 tasks.register('runAntlr4', JavaExec) {
     //see incremental task api, prevents rerun if nothing has changed.
     inputs.files "src/main/antlr4/ContractLIB.g4"
@@ -77,4 +79,18 @@ compileJava.dependsOn runAntlr4
 
 tasks.withType(Javadoc).configureEach {
     options.encoding = 'UTF-8'
+}
+
+sourcesJar.dependsOn generateGrammarSource
+sourcesJar.dependsOn runAntlr4
+afterEvaluate {
+    // this needs to be done in afterEvaluate, otherwise "generateJflex" is unknown
+    compileJava.dependsOn generateJflex
+    sourcesJar.dependsOn generateJflex
+
+    // workaround: there is no public property to set the output in the extension, we need to directly refer to the
+    // task instead
+    tasks.named('generateJflex').configure {
+        target = file("$buildDir/generated-src/jflex/main")
+    }
 }
