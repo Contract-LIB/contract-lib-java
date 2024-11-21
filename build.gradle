@@ -7,6 +7,7 @@ plugins {
     id 'antlr'
     id 'maven-publish'
     id 'org.xbib.gradle.plugin.jflex' version '3.0.2'
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 repositories {
@@ -51,6 +52,19 @@ publishing {
         maven(MavenPublication) {
             from(components.java)
         }
+    }
+}
+
+spotless {
+    java {
+        targetExclude "$buildDir/**"
+        /* To achieve (nearly) the same behavior as in the Maven build (formatter-maven-plugin), the eclipse version is
+         * fixed here. In addition, the same config file is used. The config file is taken from here:
+         * https://github.com/revelc/formatter-maven-plugin/blob/formatter-maven-plugin-2.24.1/src/main/resources/formatter-maven-plugin/eclipse/java.xml
+         * Should be updated if we don't need exactly identical behavior as with Maven ... */
+        eclipse('4.31').configFile("java.xml")
+        //indentWithSpaces(4)
+        //trimTrailingWhitespace()
     }
 }
 
