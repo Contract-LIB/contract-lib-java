@@ -7,5 +7,5 @@ import java.util.List;
 public interface Abstractions<TYPE, ABSTRACTION> {
     Types<TYPE> types(List<String> params);
 
-    ABSTRACTION abstraction(List<String> params, List<Pair<String, List<Pair<String, List<TYPE>>>>> constructors);
+    ABSTRACTION abstraction(List<String> params, List<Pair<String, List<Pair<String, TYPE>>>> constructors);
 }

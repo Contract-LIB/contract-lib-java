@@ -99,7 +99,7 @@ public class Factory implements org.contractlib.factory.Commands<Term, Type, Abs
             return empty.extend(params);
         }
 
-        public Datatype datatype(List<String> params, List<Pair<String, List<Pair<String, List<Type>>>>> constrs) {
+        public Datatype datatype(List<String> params, List<Pair<String, List<Pair<String, Type>>>> constrs) {
             return new Datatype(params, constrs);
         }
     }
@@ -112,7 +112,7 @@ public class Factory implements org.contractlib.factory.Commands<Term, Type, Abs
 
         @Override
         public Abstraction abstraction(List<String> params,
-                                       List<Pair<String, List<Pair<String, List<Type>>>>> constructors) {
+                                       List<Pair<String, List<Pair<String, Type>>>> constructors) {
             return new Abstraction(params, constructors);
         }
     }
