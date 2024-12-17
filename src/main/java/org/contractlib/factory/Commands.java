@@ -11,10 +11,10 @@ import java.util.List;
  * @param <TYPE>
  * @param <ABSTRACTION>
  * @param <DATATYPE>
- * @param <FUNDEC>
+ * @param <FUNDECL>
  * @param <COMMAND>
  */
-public interface Commands<TERM, TYPE, ABSTRACTION, DATATYPE, FUNDEC, COMMAND> {
+public interface Commands<TERM, TYPE, ABSTRACTION, DATATYPE, FUNDECL, COMMAND> {
     Types<TYPE> types(List<String> params);
 
     COMMAND declareSort(String name, Integer arity);
@@ -27,7 +27,7 @@ public interface Commands<TERM, TYPE, ABSTRACTION, DATATYPE, FUNDEC, COMMAND> {
 
     Abstractions<TYPE, ABSTRACTION> abstractions(List<Pair<String, Integer>> arities);
 
-    Functions<TYPE, FUNDEC> functions();
+    Functions<TYPE, FUNDECL> functions();
 
     COMMAND declareDatatypes(List<Pair<String, Integer>> arities, List<DATATYPE> datatypes);
 
@@ -46,6 +46,6 @@ public interface Commands<TERM, TYPE, ABSTRACTION, DATATYPE, FUNDEC, COMMAND> {
 
     COMMAND declareConst(String name, TYPE result);
 
-    COMMAND defineFunsRec(List<FUNDEC> functionDecls,
+    COMMAND defineFunsRec(List<FUNDECL> functionDecls,
                           List<TERM> bodies);
 }
