@@ -33,7 +33,7 @@ public sealed interface Command {
     record DefineFunRec(String name, List<String> params, List<Pair<String, Type>> arguments, Type result, Term body) implements Command {
     }
 
-    record DefineFunsRec(List<FunDec> funDecls, List<Term> bodies) implements Command {
+    record DefineFunsRec(List<FunDecl> funDecls, List<Term> bodies) implements Command {
     }
 
     record DefineSort(String name, List<String> params, Type body) implements Command {

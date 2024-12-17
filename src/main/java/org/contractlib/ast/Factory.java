@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Factory implements org.contractlib.factory.Commands<Term, Type, Abstraction, Datatype, FunDec, Command> {
+public class Factory implements org.contractlib.factory.Commands<Term, Type, Abstraction, Datatype, FunDecl, Command> {
     public Types types(List<String> params) {
         Types empty = new Types(Map.of());
         return empty.extend(params);
@@ -34,7 +34,7 @@ public class Factory implements org.contractlib.factory.Commands<Term, Type, Abs
     }
 
     @Override
-    public org.contractlib.factory.Functions<Type, FunDec> functions() {
+    public org.contractlib.factory.Functions<Type, FunDecl> functions() {
         return new Functions();
     }
 
@@ -66,7 +66,7 @@ public class Factory implements org.contractlib.factory.Commands<Term, Type, Abs
     }
 
     @Override
-    public Command defineFunsRec(List<FunDec> functionDecls, List<Term> bodies) {
+    public Command defineFunsRec(List<FunDecl> functionDecls, List<Term> bodies) {
         return new Command.DefineFunsRec(functionDecls, bodies);
     }
 
@@ -117,11 +117,11 @@ public class Factory implements org.contractlib.factory.Commands<Term, Type, Abs
         }
     }
 
-    class Functions implements org.contractlib.factory.Functions<Type, FunDec> {
+    class Functions implements org.contractlib.factory.Functions<Type, FunDecl> {
         @Override
-        public FunDec funDec(String name, List<String> params, List<Pair<String, Type>> arguments,
+        public FunDecl funDec(String name, List<String> params, List<Pair<String, Type>> arguments,
                                Type result) {
-            return new FunDec(name, params, arguments, result);
+            return new FunDecl(name, params, arguments, result);
         }
     }
 
