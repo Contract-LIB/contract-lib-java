@@ -34,7 +34,7 @@ class AntlrParserTests {
 
         ContractLIBParser.ScriptContext ctx = parser.script();
         Factory factory = new Factory();
-        ContractLibANTLRParser<Term, Type, Abstraction, Datatype, FunDec, Command> converter = new ContractLibANTLRParser<>(factory);
+        ContractLibANTLRParser<Term, Type, Abstraction, Datatype, FunDecl, Command> converter = new ContractLibANTLRParser<>(factory);
         converter.visit(ctx);
 
         StringBuilder sb = new StringBuilder();
@@ -62,7 +62,7 @@ class AntlrParserTests {
 
         ContractLIBParser.ScriptContext ctx = parser.script();
         Factory factory = new Factory();
-        ContractLibANTLRParser<Term, Type, Abstraction, Datatype, FunDec, Command> converter = new ContractLibANTLRParser<>(factory);
+        ContractLibANTLRParser<Term, Type, Abstraction, Datatype, FunDecl, Command> converter = new ContractLibANTLRParser<>(factory);
         converter.visit(ctx);
 
         StringBuilder sb = new StringBuilder();
