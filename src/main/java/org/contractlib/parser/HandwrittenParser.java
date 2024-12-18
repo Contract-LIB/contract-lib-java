@@ -126,12 +126,12 @@ public class HandwrittenParser extends Scanner {
         return repeat(() -> type(context));
     }
 
-    public <Type> List<Pair<String, List<Pair<String, List<Type>>>>> constructors(Types<Type> context)
+    public <Type> List<Pair<String, List<Pair<String, Type>>>> constructors(Types<Type> context)
             throws IOException {
         return repeat(() -> constructor(context));
     }
 
-    public <Type> List<Pair<String, List<Type>>> selectors(Types<Type> context) throws IOException {
+    public <Type> List<Pair<String, Type>> selectors(Types<Type> context) throws IOException {
         return repeat(() -> selector(context));
     }
 
@@ -184,25 +184,25 @@ public class HandwrittenParser extends Scanner {
         }
     }
 
-    public <Type> Pair<String, List<Type>> selector(Types<Type> context) throws IOException {
+    public <Type> Pair<String, Type> selector(Types<Type> context) throws IOException {
         if (check(LPAREN)) {
             String name = identifier();
-            List<Type> types = types(context);
+            Type types = type(context);
             expect(RPAREN);
 
-            return new Pair(name, types);
+            return new Pair<>(name, types);
         } else {
             return null;
         }
     }
 
-    public <Type> Pair<String, List<Pair<String, List<Type>>>> constructor(Types<Type> context) throws IOException {
+    public <Type> Pair<String, List<Pair<String, Type>>> constructor(Types<Type> context) throws IOException {
         if (check(LPAREN)) {
             String name = identifier();
-            List<Pair<String, List<Type>>> selectors = selectors(context);
+            List<Pair<String, Type>> selectors = selectors(context);
             expect(RPAREN);
 
-            return new Pair(name, selectors);
+            return new Pair<>(name, selectors);
         } else {
             return null;
         }
@@ -214,7 +214,7 @@ public class HandwrittenParser extends Scanner {
             Term postcondition = term(context, scope);
             expect(RPAREN);
 
-            return new Pair(precondition, postcondition);
+            return new Pair<>(precondition, postcondition);
 
         } else {
             return null;
@@ -265,7 +265,7 @@ public class HandwrittenParser extends Scanner {
         if (peek(LPAREN)) {
             return maybeParametricWithImplicitLParen((params) -> {
                 Types<Type> context = data.types(params);
-                List<Pair<String, List<Pair<String, List<Type>>>>> constructors = constructors(context);
+                List<Pair<String, List<Pair<String, Type>>>> constructors = constructors(context);
                 expect(RPAREN);
 
                 return data.datatype(params, constructors);
@@ -279,7 +279,7 @@ public class HandwrittenParser extends Scanner {
         if (peek(LPAREN)) {
             return maybeParametricWithImplicitLParen((params) -> {
                 Types<Type> context = data.types(params);
-                List<Pair<String, List<Pair<String, List<Type>>>>> constructors = constructors(context);
+                List<Pair<String, List<Pair<String, Type>>>> constructors = constructors(context);
                 expect(RPAREN);
 
                 return data.abstraction(params, constructors);
