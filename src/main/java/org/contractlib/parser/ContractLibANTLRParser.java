@@ -63,15 +63,13 @@ public class ContractLibANTLRParser<TERM, TYPE, ABS, DT, FUNDECL, COMMAND> exten
             arities.add(new Pair<>(name, arity));
         }
 
-        List<String> params = new ArrayList<>();
-        for (var p : ctx.sort_dec()) {
-            params.add(convertSymbol(p.symbol()));
-            //System.out.println("Found datatype declaration: " + p.getText());
-        }
-        Types<TYPE> context = factory.types(params);
-
         List<ABS> abstractions = new ArrayList<>();
         for (var d : ctx.datatype_dec()) {
+            List<String> params = new ArrayList<>();
+            for(var par : d.symbol()) {
+                params.add(convertSymbol(par));
+            }
+            Types<TYPE> context = factory.types(params);
             ABS abstr = convertAbstraction(d, params, context, arities);
             abstractions.add(abstr);
             //System.out.println("Found declaration of abstraction " + abstr);
@@ -107,19 +105,22 @@ public class ContractLibANTLRParser<TERM, TYPE, ABS, DT, FUNDECL, COMMAND> exten
         return new Pair<>(ctrName, selectors);
     }
 
-    private TYPE convertSort(ContractLIBParser.SortContext sort, Types<TYPE> params) {
+    private TYPE convertSort(ContractLIBParser.SortContext sort, Types<TYPE> types) {
         String identifier = sort.identifier().getText();
 
         // TODO: repair parametric sorts
-        /*List<TYPE> args = new ArrayList<>();
+        List<TYPE> args = new ArrayList<>();
         if (sort.sort() != null) {
             // parametric sort
             for (var arg : sort.sort()) {
-                args.add(convertSort(arg, params));
+                args.add(convertSort(arg, types));
             }
         }
-        return new TYPE.Sort(identifier, args);*/
-        return params.identifier(identifier);
+        if(args.isEmpty()) {
+            return types.identifier(identifier);
+        } else {
+            return types.sort(identifier, args);
+        }
     }
 
 
@@ -286,14 +287,13 @@ public class ContractLibANTLRParser<TERM, TYPE, ABS, DT, FUNDECL, COMMAND> exten
             arities.add(new Pair<>(name, arity));
         }
 
-        List<String> params = new ArrayList<>();
-        for (var p : ctx.sort_dec()) {
-            params.add(convertSymbol(p.symbol()));
-        }
-        Types<TYPE> context = factory.types(params);
-
         List<DT> datatypes = new ArrayList<>();
         for (var d : ctx.datatype_dec()) {
+            List<String> params = new ArrayList<>();
+            for(var par : d.symbol()) {
+                params.add(convertSymbol(par));
+            }
+            Types<TYPE> context = factory.types(params);
             DT dt = convertDatatype(d, params, context, arities);
             datatypes.add(dt);
         }
