@@ -85,7 +85,7 @@ public class ContractLibANTLRParser<TERM, TYPE, ABS, DT, FUNDECL, COMMAND> exten
                                             List<String> params,
                                             Types<TYPE> context,
                                             List<Pair<String, Integer>> arities) {
-        List<Pair<String, List<Pair<String, List<TYPE>>>>> constrs = new ArrayList<>();
+        List<Pair<String, List<Pair<String, TYPE>>>> constrs = new ArrayList<>();
         for (var ctr : ctx.constructor_dec()) {
             constrs.add(convertConstructor(ctr, context));
         }
@@ -93,15 +93,15 @@ public class ContractLibANTLRParser<TERM, TYPE, ABS, DT, FUNDECL, COMMAND> exten
         return abs.abstraction(params, constrs);
     }
 
-    private Pair<String, List<Pair<String, List<TYPE>>>> convertConstructor(ContractLIBParser.Constructor_decContext constr,
+    private Pair<String, List<Pair<String, TYPE>>> convertConstructor(ContractLIBParser.Constructor_decContext constr,
                                                                             Types<TYPE> params) {
         String ctrName = convertSymbol(constr.symbol());
-        List<Pair<String, List<TYPE>>> selectors = new ArrayList<>();
+        List<Pair<String, TYPE>> selectors = new ArrayList<>();
         for (var selector : constr.selector_dec()) {
             String name = convertSymbol(selector.symbol());
             TYPE t = convertSort(selector.sort(), params);
 
-            Pair<String, List<TYPE>> sel = new Pair<>(name, List.of(t));
+            Pair<String, TYPE> sel = new Pair<>(name, t);
             selectors.add(sel);
         }
         return new Pair<>(ctrName, selectors);
@@ -306,7 +306,7 @@ public class ContractLibANTLRParser<TERM, TYPE, ABS, DT, FUNDECL, COMMAND> exten
                                         List<String> params,
                                         Types<TYPE> context,
                                         List<Pair<String, Integer>> arities) {
-        List<Pair<String, List<Pair<String, List<TYPE>>>>> constrs = new ArrayList<>();
+        List<Pair<String, List<Pair<String, TYPE>>>> constrs = new ArrayList<>();
         for (var ctr : ctx.constructor_dec()) {
             constrs.add(convertConstructor(ctr, context));
         }

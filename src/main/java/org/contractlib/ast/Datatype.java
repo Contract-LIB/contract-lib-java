@@ -6,6 +6,6 @@ import java.util.List;
 
 public record Datatype(
     List<String> params,
-    List<Pair<String, List<Pair<String, List<Type>>>>> constrs
+    List<Pair<String, List<Pair<String, Type>>>> constrs
 ) {
 }
