@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 class AntlrParserTests {
 
@@ -106,6 +107,52 @@ class AntlrParserTests {
         canParseAll(new File("src/test/contractlib/regression"));
     }
 
+    // was a bug
+    @Test
+    void testParamsDatatypes() {
+        String input = "(declare-datatypes ((List 1)) ((par (T) ((nil) (cons (car T) (cdr (List T)))))))";
+        String expected = "[DeclareDatatypes[arities=[Pair[first=List, second=1]], " +
+                "datatypes=[Datatype[params=[T], constrs=[Pair[first=nil, second=[]], " +
+                "Pair[first=cons, second=[Pair[first=car, second=[Param[name=T]]], Pair[first=cdr, second=[Sort[name=List, arguments=[Param[name=T]]]]]]]]]]]]";
+        Assertions.assertEquals(expected, parse(input).toString());
+
+        input = "(declare-datatypes ((List 0)) ( ((nil) (cons (car Int) (cdr List))))))";
+        expected = "[DeclareDatatypes[arities=[Pair[first=List, second=0]], " +
+                "datatypes=[Datatype[params=[], constrs=[Pair[first=nil, second=[]], " +
+                "Pair[first=cons, second=[Pair[first=car, second=[Sort[name=Int, arguments=[]]]], Pair[first=cdr, second=[Sort[name=List, arguments=[]]]]]]]]]]]";
+        Assertions.assertEquals(expected, parse(input).toString());
+    }
+
+    // was a bug
+    @Test
+    void testParamsAbstractions() {
+        String input = "(declare-abstractions ((List 1)) ((par (T) ((nil) (cons (car T) (cdr (List T)))))))";
+        String expected = "[DeclareAbstractions[arities=[Pair[first=List, second=1]], " +
+                "abstractions=[Abstraction[params=[T], constrs=[Pair[first=nil, second=[]], " +
+                "Pair[first=cons, second=[Pair[first=car, second=[Param[name=T]]], Pair[first=cdr, second=[Sort[name=List, arguments=[Param[name=T]]]]]]]]]]]]";
+        Assertions.assertEquals(expected, parse(input).toString());
+
+        input = "(declare-abstractions ((List 0)) ( ((nil) (cons (car Int) (cdr List))))))";
+        expected = "[DeclareAbstractions[arities=[Pair[first=List, second=0]], " +
+                "abstractions=[Abstraction[params=[], constrs=[Pair[first=nil, second=[]], " +
+                "Pair[first=cons, second=[Pair[first=car, second=[Sort[name=Int, arguments=[]]]], Pair[first=cdr, second=[Sort[name=List, arguments=[]]]]]]]]]]]";
+        Assertions.assertEquals(expected, parse(input).toString());
+    }
+
+    private List<Command> parse(String string) {
+        // ANTLR parser
+        CharStream charStream = CharStreams.fromString(string);
+        ContractLIBLexer lexer = new ContractLIBLexer(charStream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        ContractLIBParser parser = new ContractLIBParser(tokens);
+
+        ContractLIBParser.ScriptContext ctx = parser.script();
+        Factory factory = new Factory();
+        ContractLibANTLRParser<Term, Type, Abstraction, Datatype, FunDecl, Command> converter = new ContractLibANTLRParser<>(factory);
+        converter.visit(ctx);
+        return converter.getCommands();
+    }
+
     void canParseAll(File path) throws IOException {
         File[] files = path.listFiles();
 
@@ -115,6 +162,7 @@ class AntlrParserTests {
             }
         }
     }
+
 
     void canParse(File file) throws IOException {
         System.out.println("Parsing:  " + file.getPath());
