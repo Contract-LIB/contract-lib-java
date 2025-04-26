@@ -7,6 +7,9 @@
 (declare-fun map.card
   (par (A B) ((Map A B)) Int))
 
+(declare-fun set.member
+  (par (A B) (A (Map A B)) Bool))
+
 (declare-fun map.keys
   (par (A B) ((Map A B)) (Set A)))
 

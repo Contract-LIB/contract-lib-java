@@ -1,4 +1,4 @@
-(declare-abstraction
+(declare-abstractions
     ((Counter 0))
     (((Counter ((value Int))))))
 
